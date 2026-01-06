@@ -71,12 +71,42 @@ body{background:#111;color:#fff}
 // Analogi: mau jatuh sejauh apa pun, dompet bocor tetap sama
 function hitung(){
   const modal = +modalEl.value;
-  const riskP = +riskEl.value/100;
-  const lev = +levEl.value;
+  const riskP = +riskEl.value / 100;
+  const lev   = +levEl.value;
   const entry = +entryEl.value;
-  const sl = +slEl.value;
+  const sl    = +slEl.value;
+  const side  = sideEl.value;
 
-  if(!modal||!entry||!sl||entry===sl){hasil.innerHTML='Input tidak valid';return;}
+  if(!modal || !entry || !sl || entry === sl || !lev){
+    hasil.innerHTML = 'Input tidak valid';
+    return;
+  }
+
+  const riskUSDT = modal * riskP;
+  const diff = Math.abs(entry - sl) / entry;
+  const diffPercent = diff * 100;
+
+  const position = riskUSDT / diff;
+  const margin = position / lev;
+
+  let tp15, tp2;
+  if(side === 'long'){
+    tp15 = entry * (1 + diff * 1.5);
+    tp2  = entry * (1 + diff * 2);
+  } else {
+    tp15 = entry * (1 - diff * 1.5);
+    tp2  = entry * (1 - diff * 2);
+  }
+
+  hasil.innerHTML = `
+    <div>Jarak Entry → SL <b>${diffPercent.toFixed(2)} %</b></div>
+    <div>Risk Maksimal <b>${riskUSDT.toFixed(2)} USDT</b></div>
+    <div>Position Size <b>${position.toFixed(2)} USDT</b></div>
+    <div>Margin Terpakai <b>${margin.toFixed(2)} USDT</b></div>
+    <div>Saran TP 1.5R <b>${tp15.toFixed(4)}</b></div>
+    <div>Saran TP 2R <b>${tp2.toFixed(4)}</b></div>
+  `;
+}
 
   const riskUSDT = modal * riskP; // loss maksimal
   const diff = Math.abs(entry - sl) / entry;
