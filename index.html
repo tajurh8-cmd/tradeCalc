@@ -86,21 +86,27 @@ function hitung(){
   const position = riskUSDT / diff;
   const margin = position / lev;
 
+  // TP otomatis berdasarkan posisi
+  let tp15, tp2;
+  if(side === 'long'){
+    tp15 = entry * (1 + diff * 1.5);
+    tp2  = entry * (1 + diff * 2);
+  } else {
+    tp15 = entry * (1 - diff * 1.5);
+    tp2  = entry * (1 - diff * 2);
+  }
+
   // TP suggestion based on SL distance
   const tp15 = entry * (1 + (diff * 1.5));
   const tp2  = entry * (1 + (diff * 2));
 
   hasil.innerHTML = `
-    <div>Jarak Entry → SL <b>${diffPercent.toFixed(2)} %</b></div>
+        <div>Jarak Entry → SL <b>${diffPercent.toFixed(2)} %</b></div>
     <div>Risk Maksimal <b>${riskUSDT.toFixed(2)} USDT</b></div>
     <div>Position Size <b>${position.toFixed(2)} USDT</b></div>
-    <div>Margin Terpakai <b>${margin.toFixed(2)} USDT</b></div>
+        <div>Margin Terpakai <b>${margin.toFixed(2)} USDT</b></div>
     <div>Saran TP 1.5R <b>${tp15.toFixed(4)}</b></div>
     <div>Saran TP 2R <b>${tp2.toFixed(4)}</b></div>
-    <div>Jarak Entry → SL <b>${diffPercent.toFixed(2)} %</b></div>
-    <div>Risk Maksimal <b>${riskUSDT.toFixed(2)} USDT</b></div>
-    <div>Position Size <b>${position.toFixed(2)} USDT</b></div>
-    <div>Margin Terpakai <b>${margin.toFixed(2)} USDT</b></div>
   `;
 }
 
