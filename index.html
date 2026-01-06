@@ -2,10 +2,10 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Futures Risk Calculator (1% Fixed Risk)</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111">Futures Risk Calculator (1% Fixed Risk)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Futures Risk Calculator (Fixed %)</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
 body{background:#111;color:#fff}
@@ -66,19 +66,18 @@ body{background:#111;color:#fff}
 </div>
 
 <script>
-// TUJUAN:
-// Menentukan berapa USDT posisi agar loss tetap = X% modal
-// Analogi: mau jatuh sejauh apa pun, dompet bocor tetap sama
+// FINAL FIXED VERSION – TANPA ERROR
 function hitung(){
-  const modal = +modalEl.value;
-  const riskP = +riskEl.value / 100;
-  const lev   = +levEl.value;
-  const entry = +entryEl.value;
-  const sl    = +slEl.value;
-  const side  = sideEl.value;
+  const modal = Number(document.getElementById('modal').value);
+  const riskP = Number(document.getElementById('risk').value) / 100;
+  const lev   = Number(document.getElementById('lev').value);
+  const entry = Number(document.getElementById('entry').value);
+  const sl    = Number(document.getElementById('sl').value);
+  const side  = document.getElementById('side').value;
+  const hasil = document.getElementById('hasil');
 
   if(!modal || !entry || !sl || entry === sl || !lev){
-    hasil.innerHTML = 'Input tidak valid';
+    hasil.innerHTML = '<div>Input tidak valid</div>';
     return;
   }
 
@@ -108,48 +107,7 @@ function hitung(){
   `;
 }
 
-  const riskUSDT = modal * riskP; // loss maksimal
-  const diff = Math.abs(entry - sl) / entry;
-  const diffPercent = diff * 100; // jarak entry ke SL (%) // % gerak harga
-
-  // Position size agar loss = riskUSDT
-  const position = riskUSDT / diff;
-  const margin = position / lev;
-
-  // TP otomatis berdasarkan posisi
-  let tp15, tp2;
-  if(side === 'long'){
-    tp15 = entry * (1 + diff * 1.5);
-    tp2  = entry * (1 + diff * 2);
-  } else {
-    tp15 = entry * (1 - diff * 1.5);
-    tp2  = entry * (1 - diff * 2);
-  }
-
-  // TP suggestion based on SL distance
-  const tp15 = entry * (1 + (diff * 1.5));
-  const tp2  = entry * (1 + (diff * 2));
-
-  hasil.innerHTML = `
-        <div>Jarak Entry → SL <b>${diffPercent.toFixed(2)} %</b></div>
-    <div>Risk Maksimal <b>${riskUSDT.toFixed(2)} USDT</b></div>
-    <div>Position Size <b>${position.toFixed(2)} USDT</b></div>
-        <div>Margin Terpakai <b>${margin.toFixed(2)} USDT</b></div>
-    <div>Saran TP 1.5R <b>${tp15.toFixed(4)}</b></div>
-    <div>Saran TP 2R <b>${tp2.toFixed(4)}</b></div>
-  `;
-}
-
-const modalEl=document.getElementById('modal');
-const riskEl=document.getElementById('risk');
-const sideEl=document.getElementById('side');
-const levEl=document.getElementById('lev');
-const entryEl=document.getElementById('entry');
-const slEl=document.getElementById('sl');
-const hasil=document.getElementById('hasil');
-</script>
-<script>
-// PWA: register service worker
+// PWA
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
